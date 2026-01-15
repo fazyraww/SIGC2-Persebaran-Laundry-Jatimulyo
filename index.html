@@ -1,282 +1,111 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>WebGIS Laundry | Jatimulyo Exclusive</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-
-    <style>
-        :root {
-            --bg-dark: #050505;
-            --bg-card: #0c0c0e;
-            --primary-purple: #8b5cf6;
-            --secondary-blue: #3b82f6;
-            --accent-cyan: #06b6d4;
-            --text-gray: #94a3b8;
-            --white: #ffffff;
-            --border-glass: rgba(255, 255, 255, 0.08);
-        }
-
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--white);
-            overflow-x: hidden;
-        }
-
-        /* Background Glow Effect ala Akademi Crypto */
-        .glow-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: 
-                radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 40%);
-            z-index: -1;
-        }
-
-        /* --- Navbar --- */
-        .navbar {
-            background: rgba(5, 5, 5, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border-glass);
-            padding: 1.2rem 0;
-        }
-
-        .navbar-brand {
-            font-weight: 800;
-            font-size: 1.4rem;
-            letter-spacing: -1px;
-            background: linear-gradient(90deg, #fff, #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* --- Hero Section --- */
-        .hero {
-            padding: 10rem 0 6rem;
-        }
-
-        .hero-badge {
-            background: rgba(139, 92, 246, 0.1);
-            color: var(--primary-purple);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            padding: 8px 20px;
-            border-radius: 100px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 2rem;
-            display: inline-block;
-        }
-
-        .hero h1 {
-            font-weight: 800;
-            font-size: clamp(2.5rem, 6vw, 4.2rem);
-            line-height: 1;
-            margin-bottom: 1.5rem;
-            letter-spacing: -2px;
-        }
-
-        .hero h1 span {
-            background: linear-gradient(90deg, var(--primary-purple), var(--secondary-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .btn-crypto {
-            background: var(--white);
-            color: var(--bg-dark);
-            padding: 15px 35px;
-            border-radius: 12px;
-            font-weight: 700;
-            transition: 0.4s;
-            border: none;
-            text-decoration: none;
-        }
-
-        .btn-crypto:hover {
-            background: var(--primary-purple);
-            color: var(--white);
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.3);
-        }
-
-        /* --- Map Showcase --- */
-        .map-wrapper {
-            position: relative;
-            background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
-            border: 1px solid var(--border-glass);
-            border-radius: 30px;
-            padding: 15px;
-            box-shadow: 0 40px 80px rgba(0,0,0,0.5);
-        }
-
-        .map-wrapper img {
-            border-radius: 20px;
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/L.Control.Locate.min.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
             width: 100%;
-            filter: contrast(1.1);
-        }
-
-        /* --- Feature Card --- */
-        .card-crypto {
-            background: var(--bg-card);
-            border: 1px solid var(--border-glass);
-            border-radius: 24px;
-            padding: 40px;
             height: 100%;
-            transition: 0.4s;
+            padding: 0;
+            margin: 0;
         }
 
-        .card-crypto:hover {
-            border-color: var(--primary-purple);
-            transform: translateY(-10px);
-            background: linear-gradient(145deg, #0c0c0e 0%, #151518 100%);
+        /* Styling Legenda Custom agar mirip Layout PNG */
+        .custom-legend {
+            background: white;
+            padding: 10px;
+            line-height: 18px;
+            color: #333;
+            border-radius: 5px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            font-family: 'Arial', sans-serif;
+            min-width: 200px;
         }
-
-        .icon-box {
-            width: 60px; height: 60px;
-            background: rgba(139, 92, 246, 0.1);
-            border-radius: 15px;
-            display: flex; align-items: center; justify-content: center;
-            color: var(--primary-purple);
-            font-size: 1.8rem;
-            margin-bottom: 2rem;
+        .custom-legend h4 {
+            margin: 0 0 10px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+            font-size: 14px;
         }
-
-        /* --- Legend --- */
-        .legend-grid {
-            display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 3rem;
+        .custom-legend i {
+            width: 15px;
+            height: 15px;
+            float: left;
+            margin-right: 8px;
+            opacity: 0.9;
+            border: 1px solid #999;
         }
-
-        .legend-tag {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border-glass);
-            padding: 10px 20px;
-            border-radius: 100px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--text-gray);
-        }
-
-        /* --- Footer --- */
-        footer {
-            padding: 5rem 0 3rem;
-            border-top: 1px solid var(--border-glass);
-            margin-top: 8rem;
-        }
-
-        .dev-badge {
-            background: #111;
-            padding: 20px;
-            border-radius: 20px;
-            border: 1px solid var(--border-glass);
-        }
-
-    </style>
-</head>
-<body>
-
-<div class="glow-bg"></div>
-
-<nav class="navbar navbar-expand-lg fixed-top">
-    <div class="container">
-        <a class="navbar-brand" href="#">SIG.LAUNDRY</a>
-        <div class="d-flex align-items-center gap-3">
-            <span class="d-none d-md-block text-gray small fw-bold">FAHMI FAREZY</span>
-            <a href="peta.html" class="btn btn-sm btn-light rounded-pill px-4 fw-bold">LAUNCH MAP</a>
+        .circle-legend { border-radius: 50%; }
+        .legend-item { margin-bottom: 5px; clear: both; display: flex; align-items: center; font-size: 12px;}
+        </style>
+        <title>Peta Interaktif Laundry Jatimulyo</title>
+    </head>
+    <body>
+        <div id="map">
         </div>
-    </div>
-</nav>
 
-<section class="hero">
-    <div class="container">
-        <div class="row align-items-center g-5">
-            <div class="col-lg-6" data-aos="fade-right">
-                <div class="hero-badge">Jatimulyo Geospasial Dashboard</div>
-                <h1>Explorasi Data <span>Laundry</span> Secara Presisi.</h1>
-                <p class="lead text-gray mb-5">
-                    Platform analisis spasial modern untuk pemetaan ekosistem jasa laundry di Kelurahan Jatimulyo. Menggunakan integrasi teknologi Qgis & WebGIS.
-                </p>
-                <div class="d-flex gap-3">
-                    <a href="peta.html" class="btn-crypto">Explore Map Now</a>
-                </div>
-            </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.js"></script>
+        <script src="js/L.Control.Locate.min.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[-7.954,112.612],[-7.940,112.630]]);
+
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('Fahmi Fahrezy &middot; Leaflet &middot; QGIS');
+        
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers'
+        });
+        measureControl.addTo(map);
+
+        // Base Map
+        var baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        // --- LEGENDA CUSTOM (Sama dengan Layout PNG) ---
+        var legend = L.control({position: 'bottomright'});
+
+        legend.onAdd = function (map) {
+            var div = L.DomUtil.create('div', 'custom-legend');
+            div.innerHTML += '<h4>Legenda Peta</h4>';
             
-            <div class="col-lg-6" data-aos="fade-left">
-                <div class="map-wrapper">
-                    <img src="Layout Peta Tematik Persebaran Laundry di Kelurahan Jatimulyo.png" alt="Peta Laundry">
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+            // Simbol Laundry (Titik Merah)
+            div.innerHTML += '<div class="legend-item"><i class="circle-legend" style="background: #e74c3c"></i> Digitasi Poin Lokasi</div>';
+            
+            // Garis-garis
+            div.innerHTML += '<div class="legend-item"><i style="background: #f1c40f; height: 3px; border:none;"></i> Jalan Gang</div>';
+            div.innerHTML += '<div class="legend-item"><i style="background: #3498db; height: 3px; border:none;"></i> Jalan Perairan</div>';
+            div.innerHTML += '<div class="legend-item"><i style="background: #ff9ff3; height: 3px; border:none;"></i> Jalan Provinsi</div>';
+            div.innerHTML += '<div class="legend-item"><i style="background: #9b59b6; height: 3px; border:none;"></i> Jalan Raya</div>';
+            
+            // Area-area (Poligon)
+            div.innerHTML += '<div class="legend-item"><i style="background: #2ecc71"></i> Area Lapangan</div>';
+            div.innerHTML += '<div class="legend-item"><i style="background: #e67e22"></i> Area Makam Jatimulyo</div>';
+            div.innerHTML += '<div class="legend-item"><i style="background: #95a5a6"></i> Area Pemukiman Jatimulyo</div>';
+            div.innerHTML += '<div class="legend-item"><i style="background: #bedcba"></i> Area Kelurahan Jatimulyo</div>';
+            
+            return div;
+        };
 
-<section class="py-5">
-    <div class="container py-5">
-        <div class="row g-4">
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
-                <div class="card-crypto">
-                    <div class="icon-box"><i class="bi bi-cpu"></i></div>
-                    <h4 class="fw-bold">Data Precision</h4>
-                    <p class="text-gray">Akurasi data lokasi yang divalidasi menggunakan koordinat riil di lapangan.</p>
-                </div>
-            </div>
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-                <div class="card-crypto">
-                    <div class="icon-box"><i class="bi bi-layers"></i></div>
-                    <h4 class="fw-bold">Thematic Layers</h4>
-                    <p class="text-gray">Visualisasi berbagai layer informasi mulai dari jaringan jalan hingga batas pemukiman.</p>
-                </div>
-            </div>
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
-                <div class="card-crypto">
-                    <div class="icon-box"><i class="bi bi-lightning"></i></div>
-                    <h4 class="fw-bold">Fast Access</h4>
-                    <p class="text-gray">Performa sistem yang ringan dan responsif untuk diakses melalui perangkat mobile.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="legend-grid" data-aos="zoom-in">
-            <div class="legend-tag"><i class="bi bi-circle-fill text-danger me-2"></i> Titik Laundry</div>
-            <div class="legend-tag"><i class="bi bi-slash-lg text-warning me-2"></i> Jalan Provinsi</div>
-            <div class="legend-tag"><i class="bi bi-slash-lg text-info me-2"></i> Perairan</div>
-            <div class="legend-tag"><i class="bi bi-square-fill text-success me-2"></i> Area Jatimulyo</div>
-            <div class="legend-tag"><i class="bi bi-square-fill text-secondary me-2"></i> Pemukiman</div>
-        </div>
-    </div>
-</section>
-
-<footer>
-    <div class="container text-center">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <h2 class="fw-bold mb-4">Developed by Experts</h2>
-                <div class="dev-badge d-inline-flex align-items-center gap-3">
-                    <div style="width: 50px; height: 50px; background: var(--primary-purple); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                        <i class="bi bi-person-fill fs-4"></i>
-                    </div>
-                    <div class="text-start">
-                        <h6 class="mb-0 fw-bold">FAHMI FAREZY</h6>
-                        <small class="text-gray">23201153 • Institut ASIA Malang</small>
-                    </div>
-                </div>
-                <p class="mt-5 text-gray small">&copy; 2026 GEOLAYER PROJECT. ALL RIGHTS RESERVED.</p>
-            </div>
-        </div>
-    </div>
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-<script>
-    AOS.init({ duration: 1000, once: true });
-</script>
-
-</body>
+        legend.addTo(map);
+        </script>
+    </body>
 </html>

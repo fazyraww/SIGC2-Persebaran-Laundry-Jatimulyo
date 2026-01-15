@@ -3,158 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebGIS Jatimulyo | Fahmi Fahrezy</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>Dashboard SIG Laundry | Jatimulyo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #3b82f6;
-            --accent: #60a5fa;
-            --bg: #020617; 
-            --glass: rgba(255, 255, 255, 0.02);
-            --glass-bright: rgba(255, 255, 255, 0.05);
-            --border: rgba(255, 255, 255, 0.08);
-            --primary-glow: rgba(59, 130, 246, 0.3);
+            --primary: #2563eb;
+            --bg-body: #f1f5f9;
+            --card: #ffffff;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
 
-        body {
-            background-color: var(--bg);
-            color: #f8fafc;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-        }
+        body { background-color: var(--bg-body); color: var(--text-dark); overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
 
-        /* Navbar */
-        nav {
-            position: fixed; top: 25px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 1100px; padding: 12px 25px;
-            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px);
-            border: 1px solid var(--border); border-radius: 100px;
-            display: flex; justify-content: space-between; align-items: center; z-index: 1000;
-        }
-
-        .logo { font-weight: 800; font-size: 1.1rem; background: linear-gradient(to right, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-        /* Hero Section - Peta Dibuat Lebih Besar */
-        .hero {
-            min-height: 100vh;
+        /* Header / Navbar ala Dashboard */
+        header {
+            background: var(--card);
+            padding: 15px 30px;
             display: flex;
-            flex-direction: column; /* Mengubah susunan agar peta bisa lebih lebar di bawah teks */
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            padding: 150px 5% 80px;
-            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            z-index: 10;
         }
 
-        .hero-text { max-width: 800px; margin-bottom: 50px; }
-        .hero-text h1 {
-            font-size: clamp(2.5rem, 6vw, 4rem); 
-            font-weight: 800; line-height: 1.1; margin-bottom: 20px;
-            background: linear-gradient(to bottom, #fff 60%, rgba(255,255,255,0.4));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
+        .brand { display: flex; align-items: center; gap: 10px; }
+        .brand-icon { width: 35px; height: 35px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
+        .brand-text h1 { font-size: 1.1rem; font-weight: 700; color: var(--text-dark); }
+        .brand-text p { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
 
-        /* Container Peta yang Bisa Di-zoom */
-        .map-container {
-            width: 100%;
-            max-width: 1000px; /* Ukuran peta diperbesar */
-            position: relative;
-            background: var(--glass-bright);
-            border: 1px solid var(--border);
-            border-radius: 30px;
-            padding: 15px;
-            overflow: hidden; /* Penting agar zoom tetap di dalam kotak */
-            box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.7);
-            transition: border-color 0.5s;
-        }
+        /* Main Content Container */
+        main { flex: 1; position: relative; padding: 20px; display: flex; flex-direction: column; gap: 20px; }
 
-        .map-container:hover { border-color: var(--primary); }
-
+        /* Map Display Area */
         .map-wrapper {
+            flex: 1;
+            background: var(--card);
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        .map-display {
             width: 100%;
             height: 100%;
-            overflow: hidden;
-            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #cbd5e1;
             cursor: zoom-in;
+            position: relative;
         }
 
-        .map-wrapper img {
-            width: 100%;
-            height: auto;
-            display: block;
-            transition: transform 0.6s cubic-bezier(0.15, 0.83, 0.66, 1);
+        .map-display img {
+            max-width: 95%;
+            max-height: 95%;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.5s ease;
         }
 
-        /* Efek Zoom saat Hover */
-        .map-wrapper:hover img {
-            transform: scale(1.5); /* Tingkat perbesaran */
+        .map-display:hover img { transform: scale(1.6); }
+
+        /* Floating Legend ala mnovaldr */
+        .floating-legend {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 260px;
+            z-index: 5;
         }
 
-        .btn-cta {
-            padding: 16px 40px; background: #fff; color: #000;
-            text-decoration: none; border-radius: 100px; font-weight: 800;
-            transition: 0.4s; display: inline-block; margin-top: 20px;
-        }
-        .btn-cta:hover { background: var(--primary); color: #fff; transform: translateY(-3px); box-shadow: 0 15px 30px rgba(59, 130, 246, 0.4); }
+        .legend-header { font-weight: 700; font-size: 0.85rem; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; color: var(--text-dark); }
+        
+        .legend-list { list-style: none; }
+        .legend-item { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 0.8rem; font-weight: 600; color: #475569; }
 
-        .reveal { opacity: 0; transform: translateY(30px); transition: 1s; }
-        .reveal.active { opacity: 1; transform: translateY(0); }
+        .sym-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 1px #ef4444; background: #ef4444; }
+        .sym-line { width: 24px; height: 4px; border-radius: 2px; }
+        .sym-box { width: 14px; height: 14px; border-radius: 3px; }
+
+        /* Action Buttons */
+        .btn-action {
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-action:hover { background: #1e40af; transform: translateY(-2px); }
+
+        /* Info Corner */
+        .info-corner { position: absolute; top: 30px; left: 30px; pointer-events: none; }
+        .badge { background: #dbeafe; color: #1e40af; padding: 6px 12px; border-radius: 50px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
 
     </style>
 </head>
 <body>
 
-    <nav>
-        <div class="logo">WebGIS Laundry</div>
-        <a href="peta.html" class="btn-cta" style="padding: 10px 22px; font-size: 11px; margin-top:0;">BUKA PETA INTERAKTIF</a>
-    </nav>
+    <header>
+        <div class="brand">
+            <div class="brand-icon">L</div>
+            <div class="brand-text">
+                <h1>WebGIS Persebaran Laundry</h1>
+                <p>Kelurahan Jatimulyo, Malang</p>
+            </div>
+        </div>
+        <a href="peta.html" class="btn-action">
+            <span>Buka Peta Interaktif</span>
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        </a>
+    </header>
 
-    <section class="hero">
-        <div class="hero-text">
-            <h1 class="reveal">Visualisasi Geospasial<br>Laundry Jatimulyo</h1>
-            <p class="reveal" style="color: #94a3b8; font-size: 1.2rem; margin-bottom: 30px;">
-                Eksplorasi persebaran titik ekonomi kreatif dengan akurasi tinggi. <br>
-                Arahkan kursor ke gambar untuk memperbesar detail peta.
-            </p>
-            <div class="reveal">
-                <a href="peta.html" class="btn-cta">Mulai Jelajahi Peta</a>
+    <main>
+        <div class="map-wrapper">
+            <div class="info-corner">
+                <span class="badge">Preview Layout Peta</span>
+            </div>
+
+            <div class="map-display" id="zoomArea">
+                <img src="Layout Peta Tematik Persebaran Laundry di Kelurahan Jatimulyo.jpg" alt="Peta Tematik">
+            </div>
+
+            <div class="floating-legend">
+                <div class="legend-header">Legenda</div>
+                <ul class="legend-list">
+                    <li class="legend-item"><span class="sym-dot"></span> Titik Lokasi Laundry</li>
+                    <li class="legend-item"><span class="sym-line" style="background: #ff99cc;"></span> Jalan Provinsi</li>
+                    <li class="legend-item"><span class="sym-line" style="background: #9966ff;"></span> Jalan Raya</li>
+                    <li class="legend-item"><span class="sym-line" style="background: #33ccff;"></span> Perairan / Sungai</li>
+                    <li class="legend-item"><span class="sym-box" style="background: #c2e0c2;"></span> Area Kelurahan</li>
+                    <li class="legend-item"><span class="sym-box" style="background: #d2b48c;"></span> Area Pemukiman</li>
+                    <li class="legend-item"><span class="sym-box" style="background: #99ff66;"></span> Area Lapangan</li>
+                </ul>
+                <p style="font-size: 10px; color: #94a3b8; margin-top: 15px; font-style: italic;">*Arahkan mouse untuk zoom detail</p>
             </div>
         </div>
 
-        <div class="map-container reveal">
-            <div class="map-wrapper" id="mapWrapper">
-                <img src="Layout Peta Tematik Persebaran Laundry di Kelurahan Jatimulyo.png" alt="Preview Peta Jatimulyo">
-            </div>
-            <div style="margin-top: 15px; font-size: 12px; color: #64748b; font-weight: 600;">
-                TIP: Hover gambar untuk Zoom Detail Layout
-            </div>
+        <div style="text-align: center; color: #94a3b8; font-size: 0.75rem; font-weight: 600;">
+            Sistem Informasi Geografis &bull; Fahmi Fahrezy &bull; 2026
         </div>
-    </section>
+    </main>
 
     <script>
-        // Script untuk animasi muncul (reveal)
-        function reveal() {
-            var reveals = document.querySelectorAll('.reveal');
-            for (var i = 0; i < reveals.length; i++) {
-                var windowHeight = window.innerHeight;
-                var revealTop = reveals[i].getBoundingClientRect().top;
-                if (revealTop < windowHeight - 50) { reveals[i].classList.add('active'); }
-            }
-        }
+        const area = document.getElementById('zoomArea');
+        const img = area.querySelector('img');
 
-        // Script tambahan untuk pergerakan zoom mengikuti mouse
-        const wrapper = document.getElementById('mapWrapper');
-        const img = wrapper.querySelector('img');
-
-        wrapper.addEventListener('mousemove', (e) => {
-            const x = e.clientX - e.target.offsetLeft;
-            const y = e.clientY - e.target.offsetTop;
-            img.style.transformOrigin = `${e.offsetX}px ${e.offsetY}px`;
+        area.addEventListener('mousemove', (e) => {
+            const { left, top, width, height } = area.getBoundingClientRect();
+            const x = ((e.pageX - left) / width) * 100;
+            const y = ((e.pageY - top) / height) * 100;
+            img.style.transformOrigin = `${x}% ${y}%`;
         });
 
-        window.addEventListener('scroll', reveal);
-        window.addEventListener('load', reveal);
+        area.addEventListener('mouseleave', () => {
+            img.style.transformOrigin = 'center center';
+        });
     </script>
 </body>
 </html>
